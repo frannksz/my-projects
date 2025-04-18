@@ -24,34 +24,31 @@ def menu():
     print("1 - Contas Fixas")
     print("2 - Contas Começo do Mês")
     print("3 - Contas Fim do Mês")
-    print("4 - Empréstimos")
-    print("5 - Calcular")
-    print("6 - Apagar Conta")
-    print("7 - Listar Contas")
-    print("8 - Remover Conta")
-    print("9 - Sair")
+    print("4 - Calcular")
+    print("5 - Apagar Conta")
+    print("6 - Listar Contas")
+    print("7 - Remover Conta")
+    print("8 - Sair")
     return input("Escolha uma opção: ") or erro()
 
 def salvar_dados():
     with open("contas.json", "w") as f:
-        json.dump({"fixas": contas_fixas, "comeco": contas_comeco, "fim": contas_fim, "emprestimos": emprestimos}, f)
+        json.dump({"fixas": contas_fixas, "comeco": contas_comeco, "fim": contas_fim}, f)
 
 def carregar_dados():
-    global contas_fixas, contas_comeco, contas_fim, emprestimos
+    global contas_fixas, contas_comeco, contas_fim
     try:
         with open("contas.json", "r") as f:
             dados = json.load(f)
             contas_fixas = dados.get("fixas", [])
             contas_comeco = dados.get("comeco", [])
             contas_fim = dados.get("fim", [])
-            emprestimos = dados.get("emprestimos", [])
     except FileNotFoundError:
         pass
 
 contas_fixas = []
 contas_comeco = []
 contas_fim = []
-emprestimos = []
 carregar_dados()
 
 def adicionar_conta_fixa():
@@ -87,27 +84,11 @@ def adicionar_conta(lista, nome):
     print("Conta adicionada com sucesso!")
     esperar_usuario()
 
-def adicionar_emprestimo():
-    descricao = input("Digite a descrição do empréstimo: ") or erro()
-    try:
-        valor = float(input("Digite o valor do empréstimo: "))
-    except ValueError:
-        erro()
-        return
-    destino = input("Esse empréstimo é para o começo (1) ou fim (2) do mês? ") or erro()
-    
-    tag = "[EMPRÉSTIMO COMEÇO DO MÊS]" if destino == '1' else "[EMPRÉSTIMO FIM DO MÊS]"
-    emprestimos.append((f"{tag} {descricao}", valor))
-    salvar_dados()
-    print("Empréstimo adicionado com sucesso!")
-    esperar_usuario()
-
 def apagar_conta():
     print("\nEscolha a categoria da conta para apagar:")
     print("1 - Contas Fixas")
     print("2 - Contas Começo do Mês")
     print("3 - Contas Fim do Mês")
-    print("4 - Empréstimos")
     opcao = input("Escolha uma opção: ") or erro()
     
     if opcao == '1':
@@ -119,9 +100,6 @@ def apagar_conta():
     elif opcao == '3':
         lista = contas_fim
         nome = "do fim do mês"
-    elif opcao == '4':
-        lista = emprestimos
-        nome = "empréstimos"
     else:
         erro()
         return
@@ -161,22 +139,17 @@ def listar_contas():
     print("\nContas do Fim do Mês:")
     for desc, valor in contas_fim:
         print(f"- {desc}: R$ {valor:.2f}")
-    print("\nEmpréstimos:")
-    for desc, valor in emprestimos:
-        print(f"- {desc}: R$ {valor:.2f}")
     esperar_usuario()
 
 def calcular():
     limpar_tela()
     total_comeco = sum(valor for _, valor in contas_comeco)
     total_fim = sum(valor for _, valor in contas_fim)
-    total_emprestimos = sum(valor for _, valor in emprestimos)
-    total_geral = total_comeco + total_fim + total_emprestimos
+    total_geral = total_comeco + total_fim
 
     print("Resumo de Gastos:")
     print(f"Total do Começo do Mês: R$ {total_comeco:.2f}")
     print(f"Total do Fim do Mês: R$ {total_fim:.2f}")
-    print(f"Total de Empréstimos: R$ {total_emprestimos:.2f}")
     print(f"Total Geral: R$ {total_geral:.2f}")
     esperar_usuario()
 
@@ -190,18 +163,17 @@ try:
         elif opcao == '3':
             adicionar_conta(contas_fim, "do Fim do Mês")
         elif opcao == '4':
-            adicionar_emprestimo()
-        elif opcao == '5':
             calcular()
-        elif opcao == '6':
+        elif opcao == '5':
             apagar_conta()
-        elif opcao == '7':
+        elif opcao == '6':
             listar_contas()
-        elif opcao == '8':
+        elif opcao == '7':
             remover_conta()
-        elif opcao == '9':
+        elif opcao == '8':
             sair_programa()
         else:
             erro()
 except KeyboardInterrupt:
     sair_programa()
+
