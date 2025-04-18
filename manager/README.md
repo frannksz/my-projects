@@ -4,5 +4,5 @@
 
 - Gerencia suas contas de começo e fim de mês
 
-<img src='/home/franksz/Contas.png'>
+<img src='Contas.png'>
 
